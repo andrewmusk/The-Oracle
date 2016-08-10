@@ -44,9 +44,18 @@ user_tweets[1]
 
 results <- dbSendQuery(db,"SELECT *, tb_tweets.favourites/tb_users.favourite_mean AS Percentage FROM tb_tweets INNER JOIN tb_users ON tb_tweets.user_id == tb_users.user_id ORDER BY Percentage DESC")
 all_tweets <- dbFetch(results,n=-1)
-top_tweet_id <- all_tweets[1,1]
+top_tweet_id <- as.character(all_tweets[1,1])
+user_id <- all_tweets[1,2]
+user <- users[users$user_id == user_id,1]
+top_tweet_id %>% showStatus() %>% statusText() -> tweet_text
+new_tweet <- str_c("from:",user," ",tweet_text)
+if (nchar(new_tweet)>140)
+{
+  updateStatus(tweet_text)
+} else {
+  updateStatus(str_c("from:",user," ",tweet_text)) 
+}
 
-updateStatus(top_tweet_id)
 
 update_mean <- function() {
   query <- "SELECT user_id, COUNT(tweet_id) AS Number, SUM(favourites) AS Sum FROM tb_tweets GROUP BY user_id"
@@ -81,3 +90,4 @@ update_mean_sql <- function(x) {
 
 update_mean()
 
+dbSendQuery(db,"DELETE FROM tb_tweets WHERE user_id>1")
