@@ -33,9 +33,6 @@ get_tweets <- function(x) {
   insert_tweets(user_tweets,user_id)
 }
 
-#I am having issues with the lapply above. Particularly when I run lapply(user_tweets, insert_tweets) with a set of sample user_tweets
-# it gives me the error that they are not the same length however when I run it manually, it works perfectly fine. 
-
 user_list <- as.list(users$username)
 lapply(user_list, get_tweets)
 lapply(test, class)
